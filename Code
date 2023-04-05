@@ -1,0 +1,34 @@
+from flask import Flask, request
+from twilio.twiml.messaging_response import MessagingResponse
+import openai
+
+# Twilio, Flask, ngrok
+#personal key (will delete it as soon as assignment gets reviewed)
+openai.api_key = "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"
+
+#using Flask app
+app = Flask(__name__)
+
+@app.route("/gpt", methods=['POST'])
+
+def chatgpt():
+    
+    input = request.form['Body'].lower()
+    print(input)
+
+    response = openai.Completion.create(
+        model="text-davinci-003", #using text_davinci
+        prompt=input,
+        max_tokens=4000,
+        temperature=0.7
+    )
+    
+    reply = MessagingResponse()
+    
+    reply.message(response["choices"][0]["text"])
+    print(response["choices"][0]["text"])
+
+    return str(reply)
+
+if __name__ == "__main__":
+    app.run(debug=True)

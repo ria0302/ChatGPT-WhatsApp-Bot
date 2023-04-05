@@ -3,8 +3,8 @@ from twilio.twiml.messaging_response import MessagingResponse
 import openai
 
 # Twilio, Flask, ngrok
-#personal key (will delete it as soon as assignment gets reviewed)
-openai.api_key = "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"
+#personal key 
+openai.api_key = "OPENAI_API_Key"
 
 #using Flask app
 app = Flask(__name__)

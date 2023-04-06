@@ -3,8 +3,8 @@ from twilio.twiml.messaging_response import MessagingResponse
 import openai
 
 # Twilio, Flask, ngrok
-#personal key 
-openai.api_key = "OPENAI_API_Key"
+#personal key
+openai.api_key = "<OPEN_API_KEY>"
 
 #using Flask app
 app = Flask(__name__)
@@ -16,17 +16,17 @@ def chatgpt():
     input = request.form['Body'].lower()
     print(input)
 
-    response = openai.Completion.create(
-        model="text-davinci-003", #using text_davinci
-        prompt=input,
-        max_tokens=4000,
-        temperature=0.7
-    )
-    
+    response = openai.ChatCompletion.create( # 1. Change the function Completion to ChatCompletion
+    model = 'gpt-3.5-turbo',
+    messages = [ # 2. Change the prompt parameter to the messages parameter
+    {'role': 'user', 'content':input}
+    ],
+  temperature = 1  
+)    
     reply = MessagingResponse()
     
-    reply.message(response["choices"][0]["text"])
-    print(response["choices"][0]["text"])
+    reply.message(response["choices"][0]["message"]["content"])
+    print(response["choices"][0]["message"]["content"])
 
     return str(reply)
 

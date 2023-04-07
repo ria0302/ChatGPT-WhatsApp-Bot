@@ -1,32 +1,43 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
+import os
 import openai
+from langchain.llms import OpenAI
+from langchain.memory import ConversationBufferMemory
+from langchain.llms import OpenAI
+from langchain.chains import ConversationChain
 
-# Twilio, Flask, ngrok
+
+# Twilio, Flask, ngrok, langchain
 #personal key
-openai.api_key = "<OPEN_API_KEY>"
+os.environ["OPENAI_API_KEY"] = "<API KEY>"
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
+#adding memory
+llm = OpenAI(temperature=0)
+conversation = ConversationChain(
+    llm=llm, 
+    verbose=True, 
+    memory=ConversationBufferMemory()
+)
 
 #using Flask app
 app = Flask(__name__)
 
 @app.route("/gpt", methods=['POST'])
 
-def chatgpt():
-    
+def getinpt():
+  
     input = request.form['Body'].lower()
-    print(input)
+    print(input)   
 
-    response = openai.ChatCompletion.create( # 1. Change the function Completion to ChatCompletion
-    model = 'gpt-3.5-turbo',
-    messages = [ # 2. Change the prompt parameter to the messages parameter
-    {'role': 'user', 'content':input}
-    ],
-  temperature = 1  
-)    
     reply = MessagingResponse()
+    response = conversation.predict(input=input)
+
     
-    reply.message(response["choices"][0]["message"]["content"])
-    print(response["choices"][0]["message"]["content"])
+    reply.message(response)
+    print(response)
 
     return str(reply)
 
